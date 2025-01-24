@@ -21,7 +21,7 @@ public class Option {
     @OneToMany(mappedBy = "option", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Vote> votes;
 
-    public Poll getSurvey() {
+    public Poll getPoll() {
         return poll;
     }
 
@@ -49,7 +49,7 @@ public class Option {
         this.votes = votes;
     }
 
-    public void setSurvey(Poll poll) {
+    public void setPoll(Poll poll) {
         this.poll = poll;
     }
 }

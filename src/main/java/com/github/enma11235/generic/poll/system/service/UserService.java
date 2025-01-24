@@ -36,8 +36,8 @@ public class UserService {
             boolean validToken = jwtTokenProvider.validateToken(token);
             if(validToken) {
                 String nickname = jwtTokenProvider.getUsernameFromToken(token);
-                if(user.get().getNickname().equals(nickname)) {
-                    return new UserDTO(user.get().getId(), user.get().getNickname(), user.get().getCreated_at(), user.get().getPassword(), user.get().getImg());
+                if(user.get().getUsername().equals(nickname)) {
+                    return new UserDTO(user.get().getId(), user.get().getUsername(), user.get().getCreated_at(), user.get().getPassword(), user.get().getImg());
                 } else {
                     throw new AuthException("Not authorized to get this user info");
                 }
@@ -62,11 +62,11 @@ public class UserService {
             LocalDate now = LocalDate.now();
 
             User user = new User();
-            user.setNickname(nickname);
+            user.setUsername(nickname);
             user.setPassword(password);
             user.setCreated_at(now.toString());
             User savedUser = userRepository.save(user);
-            String token = authService.authenticate(user.getNickname(), user.getPassword());
+            String token = authService.authenticate(user.getUsername(), user.getPassword());
             return new CreateUserResponseBody(savedUser.getId(), token);
         }
     }
@@ -91,7 +91,7 @@ public class UserService {
             String nickname = jwtTokenProvider.getUsernameFromToken(token);
             Optional<User> user = userRepository.findByNickname(nickname);
             if(user.isPresent()) {
-                user.get().setNickname(new_nickname);
+                user.get().setUsername(new_nickname);
                 user.get().setPassword(new_password);
                 user.get().setImg(new_image);
                 userRepository.save(user.get());

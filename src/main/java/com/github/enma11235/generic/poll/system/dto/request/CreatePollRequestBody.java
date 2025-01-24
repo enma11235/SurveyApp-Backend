@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.*;
 
-public class CreateSurveyRequestBody {
+public class CreatePollRequestBody {
 
     @NotBlank(message = "Title is required")
     private String title;

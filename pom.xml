@@ -9,9 +9,9 @@
 		<relativePath/>
 	</parent>
 	<groupId>com.github.enma11235</groupId>
-	<artifactId>generic-poll-system</artifactId>
+	<artifactId>poll-system</artifactId>
 	<version>1.0.2-SNAPSHOT</version>
-	<name>Generic Poll System</name>
+	<name>Poll System</name>
 	<description>Generic Poll System build with Spring Framework</description>
 	<url>https://github.com/enma11235/generic-poll-system</url>
 	<licenses>

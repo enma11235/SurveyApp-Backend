@@ -14,6 +14,8 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
+    //cada una de las operaciones de esta clase deberia lanzar una excepcion si el token no es valido
+
     public final SecretKey secretKey;
     private final long tokenExpirationTime;
 
@@ -23,27 +25,29 @@ public class JwtTokenProvider {
         this.tokenExpirationTime = tokenExpirationTime;
     }
 
-    // Genera un token JWT
+    // GENERATE TOKEN
     public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(user.getNickname())
+                .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + tokenExpirationTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(System.currentTimeMillis() + tokenExpirationTime)) //REVISAR ESTO
+                .claim("id", user.getId())
+                .claim("role", "user")
+                .signWith(SignatureAlgorithm.HS256, secretKey) //REVISAR ESTO
                 .compact();
     }
 
-    // Valida un token JWT
+    // VALIDATE TOKEN
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token); //REVISAR ESTO
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 
-    // Extrae el username del token
+    // GET USERNAME FROM TOKEN
     public String getUsernameFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey)

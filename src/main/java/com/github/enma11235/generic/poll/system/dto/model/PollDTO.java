@@ -2,7 +2,7 @@ package com.github.enma11235.generic.poll.system.dto.model;
 
 import java.util.List;
 
-public class SurveyDTO {
+public class PollDTO {
     private Long id;
     private String title;
     private SurveyCreator creator;
@@ -10,7 +10,7 @@ public class SurveyDTO {
     private String created_at;
     private int total_votes;
 
-    public SurveyDTO(Long id, String title, SurveyCreator creator, List<SurveyOption> options, String created_at, int total_votes) {
+    public PollDTO(Long id, String title, SurveyCreator creator, List<SurveyOption> options, String created_at, int total_votes) {
         this.id = id;
         this.title = title;
         this.creator = creator;

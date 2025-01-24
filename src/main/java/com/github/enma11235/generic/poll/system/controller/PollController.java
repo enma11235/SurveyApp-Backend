@@ -1,43 +1,33 @@
 package com.github.enma11235.generic.poll.system.controller;
 
-import com.github.enma11235.generic.poll.system.dto.request.CreateSurveyRequestBody;
-import com.github.enma11235.generic.poll.system.dto.model.SurveyDTO;
-import com.github.enma11235.generic.poll.system.dto.request.VoteRequestBody;
-import com.github.enma11235.generic.poll.system.dto.response.CreateSurveyResponseBody;
-import com.github.enma11235.generic.poll.system.dto.response.GetSurveyResponseBody;
-import com.github.enma11235.generic.poll.system.dto.response.GetSurveysResponseBody;
-import com.github.enma11235.generic.poll.system.dto.response.VoteResponseBody;
-import com.github.enma11235.generic.poll.system.model.Option;
-import com.github.enma11235.generic.poll.system.model.Poll;
-import com.github.enma11235.generic.poll.system.service.PollService;
-import com.github.enma11235.generic.poll.system.service.UserService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import com.github.enma11235.generic.poll.system.dto.request.*;
+import com.github.enma11235.generic.poll.system.dto.model.*;
+import com.github.enma11235.generic.poll.system.dto.response.*;
+import com.github.enma11235.generic.poll.system.model.*;
+import com.github.enma11235.generic.poll.system.service.*;
 
+import jakarta.validation.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 import java.util.*;
+
 @RestController
-@RequestMapping("/api/survey")
+@RequestMapping("/poll")
 public class PollController {
 
     private final PollService pollService;
 
-
     @Autowired
-    public PollController(PollService pollService, AuthController authController, UserService userService) {
+    public PollController(PollService pollService) {
         this.pollService = pollService;
     }
 
-    // CREATE SURVEY
-    @PostMapping
-    public ResponseEntity<CreateSurveyResponseBody> createSurvey(@RequestBody @Valid CreateSurveyRequestBody body) {
-        //obtenemos el token
-        String token = body.getToken();
-        SurveyDTO survey = pollService.createSurvey(body.getTitle(), body.getOptions(), token);
-        CreateSurveyResponseBody responseBody = new CreateSurveyResponseBody(survey.getId(), survey.getTitle(), survey.getCreator(), survey.getOptions(), survey.getCreated_at(), 0);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
+    // CREATE POLL
+    @PostMapping("/create")
+    public ResponseEntity<Void> createPoll(@RequestBody @Valid CreatePollRequestBody body) {
+        pollService.createPoll(body.getTitle(), body.getOptions(), body.getToken());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // GET SURVEY
@@ -45,8 +35,8 @@ public class PollController {
     public ResponseEntity<GetSurveyResponseBody> getSurveyById(@PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader) {
         //obtenemos el token
         String token = authorizationHeader.substring(7);
-        SurveyDTO surveyDTO = pollService.getSurveyById(id, token);
-        GetSurveyResponseBody responseBody = new GetSurveyResponseBody(surveyDTO.getId(), surveyDTO.getTitle(), surveyDTO.getCreator(), surveyDTO.getOptions(), surveyDTO.getCreated_at());
+        PollDTO pollDTO = pollService.getPollById(id, token);
+        GetSurveyResponseBody responseBody = new GetSurveyResponseBody(pollDTO.getId(), pollDTO.getTitle(), pollDTO.getCreator(), pollDTO.getOptions(), pollDTO.getCreated_at());
         return ResponseEntity.ok(responseBody);
     }
 
@@ -63,7 +53,7 @@ public class PollController {
         Poll poll = pollService.vote(option_id, body.getToken());
         HashMap<String, Object> creator = new HashMap<String, Object>();
         creator.put("id", poll.getUser().getId());
-        creator.put("nickname", poll.getUser().getNickname());
+        creator.put("nickname", poll.getUser().getUsername());
         creator.put("image", poll.getUser().getImg());
 
         List<HashMap<String, Object>> optionsList = new ArrayList<HashMap<String, Object>>();
