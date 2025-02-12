@@ -38,6 +38,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/auth/**").permitAll() // Endpoints públicos (login, registro)
                     .requestMatchers("/public/**").permitAll() // Endpoints públicos
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated() // Todos los demás endpoints requieren autenticación
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Filtro JWT
