@@ -1,5 +1,5 @@
 # quickpolls-core (2.0.0)
-This is a REST API built with **Java** and **Spring Boot**. It integrates with a local PostgreSQL database and provides essential functionality to the [web client](https://github.com/enmanuelrdgz/quickpolls-client.git). 
+**Spring Boot** REST API that integrates with a PostgreSQL database and provides functionality to a [web application](https://github.com/enmanuelrdgz/quickpolls-client.git). 
 
 ## Technologies Used
 
