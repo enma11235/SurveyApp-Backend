@@ -1,5 +1,6 @@
 package com.github.enma11235.generic.poll.system.configuration;
 
+import com.github.enma11235.generic.poll.system.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +38,6 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/auth/**").permitAll() // Endpoints públicos (login, registro)
-                    .requestMatchers("/public/**").permitAll() // Endpoints públicos
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated() // Todos los demás endpoints requieren autenticación
             )
@@ -46,16 +46,35 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // METODO BEAN QUE DEVUELVE UNA CONFIGURACION CORS
+    // ESTA CONFIGURACION ES USADA POR EL OBJETO DE CONFIG HTTP AL HABILITAR EL SOPORTE CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        // Crear una configuración de CORS
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Permite solicitudes desde Next.js
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true); // Permite cookies y credenciales
 
+        // 1. Especificar los orígenes permitidos
+        configuration.setAllowedOrigins(Arrays.asList("https://frontend.com", "http://localhost:3000"));
+
+        // 2. Especificar los métodos HTTP permitidos
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // 3. Especificar los encabezados permitidos
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
+        // 4. Permitir el envío de credenciales (cookies, tokens)
+        configuration.setAllowCredentials(true);
+
+        // 5. Configurar el tiempo de caché de CORS (en segundos)
+        configuration.setMaxAge(3600L);
+
+        // 6. Especificar los encabezados expuestos al cliente
+        configuration.setExposedHeaders(Arrays.asList("Custom-Header"));
+
+        // Registrar la configuración de CORS para todas las rutas
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Aplica CORS a todas las rutas
+        source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 
@@ -63,6 +82,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(); // Encriptación de contraseñas
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
